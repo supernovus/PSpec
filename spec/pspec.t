@@ -6,6 +6,8 @@ BEGIN { @*INC.unshift('lib'); }
 
 use PSpec;
 
+sub MAIN ( $verbose=0 ) {
+
 describe "PSpec", "times", [
     'operator works' => {
         my $value = 0;
@@ -23,28 +25,34 @@ my $value;
 
 handle-story( 
     lines("spec/stories/pspec.story"),
+    :verbose($verbose),
     -> $line {
         given $line {
-            ## Every Scenario, we should start with an empty value.
-            when / Scenario\: / { $value = 0; }
+
             ## A rule for entering the numbers.
             when /:s initial value of (\d+)/ {
                 $value = +$0;
             }
-            ## And one for pressing the operation buttons.
+
+            ## One for incrementing.
             when /:s increment (\d+) times/ {
                 +$0.Int times { $value++ }
             }
+
+            ## One for decrementing.
             when /:s decrement (\d+) times/ {
                 +$0.Int times { $value-- }
             }
+
             ## Finally, a way to get back the results.
             when /:s value should be (\d+)/ {
                 assert $value should-be +$0;
             }
+
         }
     }
 );
 
+}
 ## End of tests
 

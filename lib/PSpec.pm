@@ -10,7 +10,7 @@ class Int is also {
     }
 }
 
-module PSpec:ver<2.2.0>:auth<http://huri.net/>;
+module PSpec:ver<2.3.0>:auth<http://huri.net/>;
 
 our $tests_run    = 0;
 our $failed_tests = 0; 
@@ -172,28 +172,59 @@ END {
 # Cucumber. It doesn't support backgrounds, or scenario outlines
 # yet though, so don't even bother trying.
 
-our $feature_name   = '';
-our $scenario_name  = '';
+our $feature_name    = '';
+our $scenario_name   = '';
 
-sub default-handler {
-    return -> $line {
-        given $line {
-            when /:s Feature\: (.*)/ {
-                $feature_name = $0;
-            }
-            when /:s Scenario\: (.*)/ {
-                $scenario_name = $0;
-            }
-        }
+sub lines-handler (@lines, @handlers) {
+    for @lines -> $line {
+        line-handler $line, @handlers;
     }
 }
 
-sub handle-story (@story, Code *@handlers is rw) is export(:DEFAULT) {
-    @handlers.unshift: default-handler();
+sub line-handler ($line, @handlers) {
+    for @handlers -> $handle {
+        $handle($line);
+    }
+}
+
+## The story handler.
+#
+sub handle-story (@story, :$verbose=0, Code *@handlers) is export(:DEFAULT) {
+
+    my $in_background   = 0;
+    my @background;
+
     for @story -> $line {
-        diag $line;
-        for @handlers -> $handler {
-            $handler($line);
+        if $verbose { diag $line; }
+        my $follow_dispatch = 1;
+        
+        given $line {
+            when /:s Feature\: (.*)/ {
+                @background.splice; ## Kill existing backgrounds.
+                $feature_name    = $0;
+                $follow_dispatch = 1;
+            }
+            when /:s Scenario\: (.*)/ {
+                $scenario_name   = $0;
+                $in_background   = 0;
+                if @background {
+                    $follow_dispatch = 0;                 ## No dispatch.
+                    line-handler $line, @handlers;        ## Run this now.
+                    lines-handler @background, @handlers; ## Then run the rest.
+                }
+            }
+            when /:s Background\:/ {
+                $in_background   = 1;
+            }
+        }
+
+        if $in_background {
+            @background.push: $line;
+            $follow_dispatch = 0;
+        }
+
+        if $follow_dispatch {
+            line-handler $line, @handlers;
         }
     }
 }

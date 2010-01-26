@@ -56,3 +56,31 @@ Feature: Division
     When I press divide
     Then the result should be 5 on the screen
 
+Feature: Common scenarios with a background
+  In order to show how backgrounds works
+  As a developer of this lovely library
+  I want to see a set of scenarios with a common background
+
+  Background:
+    Given I have entered 100 into the calculator
+
+  Scenario: Add 50
+    Given I have entered 50 into the calculator
+    When I press add
+    Then the result should be 150 on the screen
+
+  Scenario: Subtract 25
+    Given I have entered 25 into the calculator
+    When I press subtract
+    Then the result should be 75 on the screen
+
+  Scenario: Multiply by 5
+    Given I have entered 5 into the calculator
+    When I press multiply
+    Then the result should be 500 on the screen
+
+  Scenario: Divide by 2
+    Given I have entered 2 into the calculator
+    When I press divide
+    Then the result should be 50 on the screen
+

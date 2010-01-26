@@ -1,3 +1,11 @@
+Version 2.3.0
+	* Some bug fixes
+	* Reworked the story handler significantly
+	* Added Background support to the story handler
+	* Expanded test coverage
+	* Made the story tests quiet by default. Pass '-v' if you want
+	  The story to be read out.
+
 Version 2.2.0
 	* Made the times operator more like the .times method.
 	* Reorganized the files into directories such as 'lib', 'spec', etc.
@@ -5,8 +13,8 @@ Version 2.2.0
 	* Added a README file.
 
 Version 2.1.0
-	* Implemented a .times method for Int objects, solution provided by Carl
-	Masak.
+	* Implemented a .times method for Int objects, 
+	  solution provided by Carl Masak.
 
 Version 2.0.0
 	* Implemented minimal Cucumber-like "story" handling.

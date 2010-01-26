@@ -11,6 +11,9 @@ the one on the front page of the RSpec website.
 After making one, I turned my attention to the example on the Cucumber
 website, and added a simple story handler to the library.
 
+The story handler currently handles simple stories, as well as backgrounds.
+It does not handle scenario outlines yet (coming soon.)
+
 In addition to the basic testing stuff, the PSpec library also includes some
 utility functionality such as a 'times' operator and .times Int method.
 
@@ -26,7 +29,13 @@ If you want to run all of the specification tests, you can also use the
 
  $ prove -v --perl perl6 -r ./spec/
 
-Just note that the specs included with the library have intentionally
+Oh, and now the story based tests are quiet by default. If you want
+them to display their story (as TAP comments) then call the test
+with the -v flag. For example:
+
+  $ perl6 ./spec/pspec.t -v
+
+Just note that most of the specs included with the library have intentionally
 failing tests to show how the testing framework displays them.
 
 The only test that should pass 100% is the pspec.t which is the test
@@ -42,7 +51,7 @@ library soon, I promise!
 For now, please read the original article that I wrote introducing the
 PSpec library:
 
-  http://huri.net/tech/perl6-rspec
+  http://huri.net/tech/pspec
 
 ~ Credits ~
 
