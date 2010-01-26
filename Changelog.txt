@@ -1,0 +1,24 @@
+Version 2.2.0
+	* Made the times operator more like the .times method.
+	* Reorganized the files into directories such as 'lib', 'spec', etc.
+	* Added a story test to the pspec.t specification.
+	* Added a README file.
+
+Version 2.1.0
+	* Implemented a .times method for Int objects, solution provided by Carl
+	Masak.
+
+Version 2.0.0
+	* Implemented minimal Cucumber-like "story" handling.
+
+Version 1.2.0
+	* Made a new syntax for comparisons like >, <, gt, etc.
+
+Version 1.1.0
+	* Made should-be a public function as well as infix operator.
+	* Added ability to use special pair objects for more advanced comparisons.
+
+Version 1.0.0
+	* First release
+
+
