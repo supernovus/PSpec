@@ -12,7 +12,7 @@ our $calculator = Calculator.new;
 sub MAIN ( $verbose=0 ) {
 
 handle-story( 
-    lines("spec/stories/calculator.story"),
+    lines("examples/stories/calculator.story"),
     :verbose($verbose),
     -> $line {
         given $line {

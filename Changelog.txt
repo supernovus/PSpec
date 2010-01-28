@@ -1,3 +1,11 @@
+Version 2.4.0
+	* Added Scenario Outlines functionality, and a spec test for it.
+	* Refactored a bit.
+	* Changed how verbosity works, use -vv for double verbosity now.
+	* Reorganized the directories again.
+	  The core tests are now in 't' and example tests are in 'examples'.
+	* Preparing for tables and multiline input support (next version).
+
 Version 2.3.0
 	* Some bug fixes
 	* Reworked the story handler significantly

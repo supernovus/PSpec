@@ -1,6 +1,8 @@
-# A very simple RSpec-inspired interface.
-# Not meant as a serious implementation, just an experiment.
-# Now includes extremely experimental and limited Cucumber-like functionality.
+# -----------------------------------------------------------------------------
+#  PSpec: RSpec + Cucumber for Perl 6
+#   See: http://huri.net/tech/pspec
+#   or: http://github.org/supernovus/PSpec
+# -----------------------------------------------------------------------------
 
 ## A times method for Int, as suggested by Carl Masak
 
@@ -10,12 +12,34 @@ class Int is also {
     }
 }
 
-module PSpec:ver<2.3.0>:auth<http://huri.net/>;
+## A tag replacement parser for Str. Pass it a hash, and optionally
+#  a prefix and suffix and it will replace any instances of the keys
+#  with the mapped values. Useful for templates!
+#  NOTE: This method MODIFIES the String object that calls it, use carefully!
+
+class Str is also {
+    method replace-tags (%tags, $prefix='<', $suffix='>') {
+        for %tags.kv -> $key, $value {
+            self.=subst("$prefix$key$suffix", $value);
+        }
+        return self;
+    }
+}
+
+module PSpec:ver<2.4.0>:auth<http://huri.net/>;
 
 our $tests_run    = 0;
 our $failed_tests = 0; 
 our $die_on_fail  = 0; 
 our $test_plan    = 0; 
+
+sub check-verbose is export(:DEFAULT) {
+    my $verbose = 0;
+    if @*ARGS[0] ~~ / ^ \- (v+) / {
+        $verbose = ~$0.chars;
+    }
+    return $verbose;
+}
 
 # New infix operator: should-be
 # Performs a test, and if it fails, lists the value that was returned, 
@@ -187,22 +211,63 @@ sub line-handler ($line, @handlers) {
     }
 }
 
-## The story handler.
-#
-sub handle-story (@story, :$verbose=0, Code *@handlers) is export(:DEFAULT) {
+## The public story handler function.
+#  Calls the private method.
 
+sub handle-story (
+    @story, 
+    :$verbose=check-verbose(), 
+    Code *@handlers
+) is export(:DEFAULT) {
+    story-handler(@story, :verbose($verbose), @handlers);
+}
+
+## The real story handler.
+sub story-handler (@story, :$verbose=0, Code *@handlers) {
+
+    ## For backgrounds
     my $in_background   = 0;
     my @background;
 
+    ## For tables
+    my $previous_line   = '';
+    my $table_statement = ''; ## Empty when unused.
+    my @table_fields;
+    my @table_data;
+
+    ## For outlines
+    my $outline_name    = '';
+    my $in_outline      = 0;
+    my @outline_text;
+    my $in_examples     = 0;
+    my @example_fields;
+    
     for @story -> $line {
         if $verbose { diag $line; }
         my $follow_dispatch = 1;
         
         given $line {
+            if $in_examples {
+                when not /:s ^ \| / {
+                    $in_examples = 0;
+                }
+            }
             when /:s Feature\: (.*)/ {
                 @background.splice; ## Kill existing backgrounds.
                 $feature_name    = $0;
                 $follow_dispatch = 1;
+            }
+            when /:s Scenario Outline\: (.*)/ {
+                @outline_text.splice;  ## Make sure this is empty.
+                $outline_name    = $0;
+                $in_outline      = 1;
+            }
+            if ($in_outline) {
+                when /:s Examples\:/ {
+                    @example_fields.splice; ## Make sure this is empty.
+                    $in_outline  = 0;
+                    $in_examples = 1;
+                }
             }
             when /:s Scenario\: (.*)/ {
                 $scenario_name   = $0;
@@ -218,6 +283,36 @@ sub handle-story (@story, :$verbose=0, Code *@handlers) is export(:DEFAULT) {
             }
         }
 
+        if $in_outline {
+            @outline_text.push: $line;
+            $follow_dispatch = 0;
+        }
+
+        if $in_examples && $line ~~ /:s ^ \| / {
+            ## Get rid of the first line, it's the Outline statement.
+            $follow_dispatch = 0;
+            if @example_fields {
+                my %example;
+                my @temp_fields = $line.split(/:s \| /);
+                for @example_fields Z @temp_fields -> $field, $value {
+                    if $field {
+                        %example{$field} = $value;
+                    }
+                }
+                $scenario_name = $outline_name ~ ' # ' ~ $in_examples++;
+                line-handler "Subtest: $scenario_name", @handlers;
+                my @outline = @outline_text;
+                @outline>>.replace-tags(%example);
+                my $inner_verbose = 0;
+                if ($verbose > 1) { $inner_verbose = $verbose; }
+                story-handler @outline, :verbose($inner_verbose), @handlers;
+            }
+            else {
+                @outline_text.shift;
+                @example_fields = $line.split(/:s \| /);
+            }
+        }
+
         if $in_background {
             @background.push: $line;
             $follow_dispatch = 0;
@@ -226,10 +321,15 @@ sub handle-story (@story, :$verbose=0, Code *@handlers) is export(:DEFAULT) {
         if $follow_dispatch {
             line-handler $line, @handlers;
         }
+
+        $previous_line = $line;
+
     }
 }
 
 sub assert ($condition) is export(:DEFAULT) {
     return ok $condition, "$feature_name: $scenario_name";
 }
+
+## End of library
 
