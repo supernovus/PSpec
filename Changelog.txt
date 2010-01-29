@@ -1,3 +1,12 @@
+Version 2.5.0
+	* Added step chaining, using a new declare statement.
+	* Added Cucumber Tables. You can use a Table object.
+	* Added a hashMap method to Array objects. Used in the Table class,
+	  and in the Outlines functionality.
+	* Added multiline text, using a Pair object.
+	* Made a 'matching' function as a helper for handlers that use
+	  Tables or Mutiline text. Use 'given matching $line'.
+
 Version 2.4.0
 	* Added Scenario Outlines functionality, and a spec test for it.
 	* Refactored a bit.

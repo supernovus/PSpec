@@ -31,8 +31,16 @@ class Calculator {
         @.stack.push($number);
     }
 
-    method total {
+    method total () {
         [+] @.stack;
+    }
+
+    method first (Int $i) {
+        @.stack[$i];
+    }
+
+    method last (Int $i=1) {
+        @.stack[*-$i];
     }
 
     method clear {

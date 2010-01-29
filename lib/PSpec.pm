@@ -26,7 +26,9 @@ class Str is also {
     }
 }
 
-module PSpec:ver<2.4.0>:auth<http://huri.net/>;
+use Table;
+
+module PSpec:ver<2.5.0>:auth<http://huri.net/>;
 
 our $tests_run    = 0;
 our $failed_tests = 0; 
@@ -198,6 +200,23 @@ END {
 
 our $feature_name    = '';
 our $scenario_name   = '';
+our @call_queue; ## Now we add statements in handlers.
+
+sub declare (Str $line) is export(:DEFAULT) {
+    @call_queue.push: $line;
+}
+
+sub split-def ($line) {
+    my @def = $line.split(/:s \| /);
+    @def.pop;    ## Kill the last empty field.
+    @def.shift;  ## Kill the first empty field.
+    return @def;
+}
+
+sub build-fields ($line, @fields) {
+    my @temp_fields = split-def $line; 
+    return @temp_fields.hashMap(@fields);
+}
 
 sub lines-handler (@lines, @handlers) {
     for @lines -> $line {
@@ -222,8 +241,16 @@ sub handle-story (
     story-handler(@story, :verbose($verbose), @handlers);
 }
 
+## A quick way to check verbosity levels.
+
+sub chain-handler (@story, @handlers, $verbose, $min) {
+    my $inner_verbose = 0;
+    if ($verbose > $min) { $inner_verbose = $verbose; }
+    story-handler(@story, :verbose($inner_verbose), @handlers);
+}
+
 ## The real story handler.
-sub story-handler (@story, :$verbose=0, Code *@handlers) {
+sub story-handler (@story, :$verbose=0, @handlers) {
 
     ## For backgrounds
     my $in_background   = 0;
@@ -231,9 +258,12 @@ sub story-handler (@story, :$verbose=0, Code *@handlers) {
 
     ## For tables
     my $previous_line   = '';
-    my $table_statement = ''; ## Empty when unused.
-    my @table_fields;
-    my @table_data;
+    my $table = Table.new;
+
+    ## For multiline text
+    my $multiline = '';
+    my @multiline;
+    my $line_length = 0;
 
     ## For outlines
     my $outline_name    = '';
@@ -247,9 +277,48 @@ sub story-handler (@story, :$verbose=0, Code *@handlers) {
         my $follow_dispatch = 1;
         
         given $line {
+            when Table { } # We skip tables. Handle elsewhere.
+            when Pair { }  # We skip pairs.  Handle elsewhere.
             if $in_examples {
                 when not /:s ^ \| / {
                     $in_examples = 0;
+                }
+            }
+            elsif !$in_outline && !$in_background {
+                if $table.key {
+                    when not /:s ^ \| / {
+                        line-handler $table, @handlers;
+                        $table.clear;
+                        continue;
+                    }
+                }
+                if $multiline {
+                    when /:s ^ \"\"\" $/ {
+                        ## We've reached the end of the text.
+                        my $linePair = $multiline => @multiline;
+                        line-handler $linePair, @handlers;
+                        @multiline.splice;
+                        $multiline = '';
+                        $line_length = 0;
+                    }
+                    when not /:s ^ \"\"\" $/ {
+                        $line.=substr($line_length);
+                        @multiline.push: $line;
+                        $follow_dispatch = 0;
+                    }
+                }
+                else {
+                    when /^(<.ws>)\"\"\"<.ws>$/ {
+                        $line_length = ~$0.chars;
+                        $follow_dispatch = 0;
+                        $multiline = $previous_line;
+                    }
+                }
+                when /:s ^ \| / {
+                    $follow_dispatch = 0;
+                    $table.key = $previous_line if !$table.key;
+                    my @fields = split-def $line;
+                    $table.push: \@fields;
                 }
             }
             when /:s Feature\: (.*)/ {
@@ -275,7 +344,8 @@ sub story-handler (@story, :$verbose=0, Code *@handlers) {
                 if @background {
                     $follow_dispatch = 0;                 ## No dispatch.
                     line-handler $line, @handlers;        ## Run this now.
-                    lines-handler @background, @handlers; ## Then run the rest.
+                    ## Then run the rest:
+                    chain-handler @background, @handlers, $verbose, 2; 
                 }
             }
             when /:s Background\:/ {
@@ -289,32 +359,26 @@ sub story-handler (@story, :$verbose=0, Code *@handlers) {
         }
 
         if $in_examples && $line ~~ /:s ^ \| / {
-            ## Get rid of the first line, it's the Outline statement.
             $follow_dispatch = 0;
             if @example_fields {
-                my %example;
-                my @temp_fields = $line.split(/:s \| /);
-                for @example_fields Z @temp_fields -> $field, $value {
-                    if $field {
-                        %example{$field} = $value;
-                    }
-                }
+                my %example = build-fields($line, @example_fields);
                 $scenario_name = $outline_name ~ ' # ' ~ $in_examples++;
                 line-handler "Subtest: $scenario_name", @handlers;
                 my @outline = @outline_text;
                 @outline>>.replace-tags(%example);
-                my $inner_verbose = 0;
-                if ($verbose > 1) { $inner_verbose = $verbose; }
-                story-handler @outline, :verbose($inner_verbose), @handlers;
+                chain-handler @outline, @handlers, $verbose, 1;
             }
             else {
+                ## Get rid of the first line, it's the Outline statement.
                 @outline_text.shift;
-                @example_fields = $line.split(/:s \| /);
+                @example_fields = split-def $line;
             }
         }
 
         if $in_background {
-            @background.push: $line;
+            if $line !~~ /:s Background\: / {
+                @background.push: $line;
+            }
             $follow_dispatch = 0;
         }
 
@@ -324,11 +388,28 @@ sub story-handler (@story, :$verbose=0, Code *@handlers) {
 
         $previous_line = $line;
 
+        ## Next up, run anything in the call queue.
+        if @call_queue {
+            my @chain_story = @call_queue;
+            @call_queue.splice;
+            chain-handler @chain_story, @handlers, $verbose, 1;
+        }
+
     }
 }
 
 sub assert ($condition) is export(:DEFAULT) {
     return ok $condition, "$feature_name: $scenario_name";
+}
+
+## Use for handlers that need to support tables and multiline text.
+
+sub matching ($line) is export(:DEFAULT) {
+    my $matcher = $line;
+    if $line ~~ Table | Pair {
+        $matcher = $line.key;
+    }
+    return $matcher;
 }
 
 ## End of library

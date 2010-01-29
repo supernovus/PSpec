@@ -14,12 +14,19 @@ website, and added a simple story handler to the library.
 The story handler currently handles simple stories, backgrounds, 
 and scenario outlines.
 
+There is support for chaining rules. If you want to call another rule
+from a step definition, use: declare "test for $rule";
+
+There is also tables and multline text support.
+
 In addition to the basic testing stuff, the PSpec library also includes some
 utility functionality such as a 'times' operator and .times Int method.
 
 Oh and a tag parser method for Str objects (called 'replace-tags'). 
 Pass it a hash, and it will replace any instance of <key> with the 
 mapped value. Useful for templates (and Scenario Outlines.)
+
+There is an object called Table which is used to prove Cucumber-like tables.
 
 ~ Usage ~
 
