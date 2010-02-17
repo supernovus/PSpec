@@ -1,3 +1,9 @@
+Version 2.5.1
+	* Added an overloaded definition of the 'x' infix operator.
+	* Fixed the comments for the Cucumber-like functionality.
+	* Added a caveat to the README about the new Rakudo master branch.
+	* Added a TODO section to the README, outlining my ideas for 3.0
+
 Version 2.5.0
 	* Added step chaining, using a new declare statement.
 	* Added Cucumber Tables. You can use a Table object.

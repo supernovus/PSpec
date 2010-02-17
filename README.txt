@@ -52,6 +52,20 @@ to show how the output from such tests would appear.
 The tests in the 't' folder on the other hand are used to test PSpec itself
 and should pass. If they don't, there is a problem.
 
+~ Caveats ~
+
+This currently does not work with the 'ng' branch of Rakudo, which
+as of February 12th, 2010, is the new 'master' branch.
+
+Until the new branch is back up to the functionality of the old one,
+the recommended release of Rakudo to use with PSpec is #25, the
+release from January 2010.
+
+I will be testing the new Rakudo master branch as it's development
+continues and will be helping to get it to run PSpec again.
+
+I will remove this section when that glorious day happens.
+
 ~ Documentation ~
 
 This README file is it for now.
@@ -70,6 +84,21 @@ For now, please read the original article that I wrote introducing the
 PSpec library:
 
   http://huri.net/tech/pspec
+
+~ TODO ~
+
+I would like to modularlize the PSpec library further, splitting off
+generic functionality into separate libraries, and then splitting off the
+Cubumber-like story functionality into a new library called Pickle.
+
+Pickle will still be a part of the PSpec project, but will be a separate
+library file (which will depend on the PSpec library itself.)
+
+Since this will be such a massive change, which will break any and all
+assumptions of backwards compatibility, it will be released as version 3.0.
+
+It's not high on my priority list, so don't expect it too soon.
+I hope to deliver it in time for Rakudo *'s release in Q2 2010.
 
 ~ Credits ~
 

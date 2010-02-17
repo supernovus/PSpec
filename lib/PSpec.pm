@@ -28,7 +28,7 @@ class Str is also {
 
 use Table;
 
-module PSpec:ver<2.5.0>:auth<http://huri.net/>;
+module PSpec:ver<2.5.1>:auth<http://huri.net/>;
 
 our $tests_run    = 0;
 our $failed_tests = 0; 
@@ -116,6 +116,15 @@ multi sub infix:<times> (Int $num, &closure) is export(:DEFAULT) {
     for ^$num { closure() }
 }
 
+# Overloaded infix operator: x
+# Specify a block of code, x, then an integer.
+# It calls $integer times { block of code }.
+# Example: { say "hello" } x 20
+
+multi sub infix:<x> (&closure, Int $num) is export(:DEFAULT) {
+    $num times &closure;
+}
+
 # Public function: plan ($number)
 # Adds the specified number to the planned number of tests.
 # By default the test suites have no plan, so this is optional.
@@ -193,10 +202,7 @@ END {
 ### PickleSandwich (aka Cucumber) functionality below here.
 # 
 # I haven't written any documentation for this bit of code yet.
-# See the 'calc.p6' and 'calculator.story' for an example of
-# how this works. It's a simple emulation of the 'story' from
-# Cucumber. It doesn't support backgrounds, or scenario outlines
-# yet though, so don't even bother trying.
+# See the tests in examples/ and t/ to see how this works.
 
 our $feature_name    = '';
 our $scenario_name   = '';

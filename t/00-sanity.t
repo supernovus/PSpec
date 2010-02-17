@@ -16,7 +16,12 @@ describe "PSpec", "times", [
         my $value = 0;
         25.times: { $value++ }
         $value should-be 25;
-    }
+    },
+    "overloaded x operator" => {
+        my $value = 0;
+        { $value++ } x 30;
+        $value should-be 30;
+    },
 ];
 
 ## End of tests
