@@ -5,6 +5,7 @@ use v6;
 BEGIN { @*INC.unshift('lib'); }
 
 use PSpec;
+use Times :ALL;
 
 describe "PSpec", "times", [
     'operator works' => {

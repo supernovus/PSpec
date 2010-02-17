@@ -4,7 +4,7 @@ use v6;
 
 BEGIN { @*INC.unshift('lib'); }
 
-use PSpec;
+use Pickle;
 use Calculator;
 
 our $calculator = Calculator.new;

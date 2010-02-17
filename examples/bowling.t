@@ -6,6 +6,7 @@ BEGIN { @*INC.unshift('lib'); }
 
 use PSpec;
 use Bowling;
+use Times;
 
 ## See PSpec for more information on 'describe', 'times' and 'should-be'.
 

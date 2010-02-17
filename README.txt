@@ -11,22 +11,30 @@ the one on the front page of the RSpec website.
 After making one, I turned my attention to the example on the Cucumber
 website, and added a simple story handler to the library.
 
-The story handler currently handles simple stories, backgrounds, 
-and scenario outlines.
+The story handler has been separated out as it's own library (which
+still depends on PSpec) called Pickle.
 
-There is support for chaining rules. If you want to call another rule
+Pickle currently handles simple stories, backgrounds, scenario outlines,
+tables, and multiline text.
+
+There is also support for chaining rules. If you want to call another rule
 from a step definition, use: declare "test for $rule";
 
-There is also tables and multline text support.
+In addition to the basic testing stuff, the PSpec project also includes some
+utility functionality, mostly separated out into other libraries, such
+as the Times library which provides a 'times' operator and .times Int method.
 
-In addition to the basic testing stuff, the PSpec library also includes some
-utility functionality such as a 'times' operator and .times Int method.
-
-Oh and a tag parser method for Str objects (called 'replace-tags'). 
+Pickle also has a tag parser method for Str objects (called 'replace-tags'). 
 Pass it a hash, and it will replace any instance of <key> with the 
 mapped value. Useful for templates (and Scenario Outlines.)
 
-There is an object called Table which is used to prove Cucumber-like tables.
+There is an object called Table which is used by Pickle to provide
+Cucumber-like Tables. It allows multiple "views" of the data from the
+table.
+
+Oh, and for no particular reason whatsoever, there is a reverse polish
+calculator class called Calculator also included, it's used in a few of
+the examples and tests.
 
 ~ Usage ~
 
@@ -84,21 +92,6 @@ For now, please read the original article that I wrote introducing the
 PSpec library:
 
   http://huri.net/tech/pspec
-
-~ TODO ~
-
-I would like to modularlize the PSpec library further, splitting off
-generic functionality into separate libraries, and then splitting off the
-Cubumber-like story functionality into a new library called Pickle.
-
-Pickle will still be a part of the PSpec project, but will be a separate
-library file (which will depend on the PSpec library itself.)
-
-Since this will be such a massive change, which will break any and all
-assumptions of backwards compatibility, it will be released as version 3.0.
-
-It's not high on my priority list, so don't expect it too soon.
-I hope to deliver it in time for Rakudo *'s release in Q2 2010.
 
 ~ Credits ~
 

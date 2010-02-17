@@ -1,4 +1,4 @@
-use PSpec;
+use Times;
 
 module Story;
 
