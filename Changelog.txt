@@ -1,3 +1,8 @@
+Version 3.0.1
+	* Fixed a sub definition in PSpec.pm
+	* Made Story.pm compile properly.
+	* Added edit.sh from ww6 for easy compiling (./edit.sh -c)
+
 Version 3.0.0
 	* Split the story handling into its own library: Pickle
 	* Split the 'times' stuff into a Times library.

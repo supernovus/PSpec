@@ -4,7 +4,7 @@
 #   or: http://github.org/supernovus/PSpec
 # -----------------------------------------------------------------------------
 
-module PSpec:ver<3.0.0>:auth<http://huri.net/>;
+module PSpec:ver<3.0.1>:auth<http://huri.net/>;
 
 our $tests_run    = 0;
 our $failed_tests = 0; 
@@ -100,7 +100,7 @@ sub die_on_fail ($fail=1) is export(:DEFAULT) {
 # Provides the Test::Simple like 'ok()' functionality.
 # Outputs in TAP format (does not support nested TAP yet.)
 
-sub ok is export(:ALL) ($cond, $desc) {
+sub ok ($cond, $desc) is export(:ALL) {
     $tests_run++;
     unless $cond {
         print "not ";
