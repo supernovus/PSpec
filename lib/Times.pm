@@ -1,6 +1,8 @@
 ## A times method for Int, as suggested by Carl Masak
 
-class Int is also {
+use MONKEY_TYPING;
+
+augment class Int {
     method times (&code) {
         for ^self { code() }
     }

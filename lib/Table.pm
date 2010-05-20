@@ -1,6 +1,8 @@
 ## A Cucumber-like Table class, and modifications to Array.
 
-class Array is also {
+use MONKEY_TYPING;
+
+augment class Array {
     method hashMap (@fields) {
         my %fields;
         for @fields Z self -> $field, $value {

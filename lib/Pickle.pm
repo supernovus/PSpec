@@ -1,13 +1,16 @@
 use v6;
 
-use PSpec :ALL;
+#use PSpec :ALL;
+use PSpec;
+
+use MONKEY_TYPING;
 
 ## A tag replacement parser for Str. Pass it a hash, and optionally
 #  a prefix and suffix and it will replace any instances of the keys
 #  with the mapped values. Useful for templates!
 #  NOTE: This method MODIFIES the String object that calls it, use carefully!
 
-class Str is also {
+augment class Str {
     method replace-tags (%tags, $prefix='<', $suffix='>') {
         for %tags.kv -> $key, $value {
             self.=subst("$prefix$key$suffix", $value);
@@ -84,7 +87,7 @@ sub chain-handler (@story, @handlers, $verbose, $min) {
 }
 
 ## The real story handler.
-sub story-handler (@story, :$verbose=0, @handlers) {
+sub story-handler (@story, @handlers, :$verbose=0 ) {
 
     ## For backgrounds
     my $in_background   = 0;
