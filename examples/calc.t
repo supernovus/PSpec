@@ -33,7 +33,7 @@ handle-story(
             ## And one for pressing the operation buttons.
             when /:s press (.*)/ {
                 #diag "====> Pressing $0 on calculator";
-                $calculator."$0";
+                $calculator."$0"();
             }
 
             ## Finally, a way to get back the results.

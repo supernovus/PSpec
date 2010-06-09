@@ -1,12 +1,3 @@
-## A times method for Int, as suggested by Carl Masak
-
-use MONKEY_TYPING;
-
-augment class Int {
-    method times (&code) {
-        for ^self { code() }
-    }
-}
 
 module Times:ver<3.0.0>:auth<http://huri.net/>;
 

@@ -22,7 +22,7 @@ from a step definition, use: declare "test for $rule";
 
 In addition to the basic testing stuff, the PSpec project also includes some
 utility functionality, mostly separated out into other libraries, such
-as the Times library which provides a 'times' operator and .times Int method.
+as the Times library which provides a 'times' operator. 
 
 Pickle also has a tag parser method for Str objects (called 'replace-tags'). 
 Pass it a hash, and it will replace any instance of <key> with the 
@@ -98,10 +98,13 @@ PSpec library:
 Well, I must send cudos to the original authors of RSpec and Cucumber,
 without them, this wouldn't exist.
 
-Also, a big cheers to Carl Masak, who is always friendly and helpful,
-and who offered a solution to the .times method for Int objects. 
+Also, a big cheers to Carl Masak, who is always friendly and helpful!
 And a call-out to Larry Wall whose help on the #perl6 channel has been 
 greatly appreciated! I guess I should also thank him for creating Perl :-)
+
+Since writing the original version of this Credits section, I've received
+a lot of help and feedback from many people on the #perl6 channel. Thanks
+to the whole Perl 6 community for being awesome!
 
 ~ License ~
 
