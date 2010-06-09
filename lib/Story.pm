@@ -5,7 +5,7 @@ module Story;
 
 my $value;
 
-sub default-handler () {
+our sub default-handler () {
     return -> $line {
         given $line {
 
