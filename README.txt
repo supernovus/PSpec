@@ -2,6 +2,14 @@
 + PSpec: An RSpec + Cucumber inspired BDD Test Framework for Perl 6            +
 +------------------------------------------------------------------------------+
 
+~ Note ~
+
+This hasn't really been worked on since early 2010, and is quite obsolete
+and broken in modern versions of Rakudo Perl 6 (it last worked in the
+'alpha' branch, which predates 'ng', which predates 'nom'. Yeah, it's old.)
+
+I am planning a full scale rewrite of this library, stay tuned.
+
 ~ Introduction ~
 
 PSpec was started as a fun experiment to see if I could make a library
@@ -60,20 +68,6 @@ to show how the output from such tests would appear.
 The tests in the 't' folder on the other hand are used to test PSpec itself
 and should pass. If they don't, there is a problem.
 
-~ Caveats ~
-
-This currently does not work with the 'ng' branch of Rakudo, which
-as of February 12th, 2010, is the new 'master' branch.
-
-Until the new branch is back up to the functionality of the old one,
-the recommended release of Rakudo to use with PSpec is #25, the
-release from January 2010.
-
-I will be testing the new Rakudo master branch as it's development
-continues and will be helping to get it to run PSpec again.
-
-I will remove this section when that glorious day happens.
-
 ~ Documentation ~
 
 This README file is it for now.
@@ -91,7 +85,7 @@ library soon, I promise!
 For now, please read the original article that I wrote introducing the
 PSpec library:
 
-  http://huri.net/tech/pspec
+  http://huri.net/articles/2010/01/pspec.html
 
 ~ Credits ~
 
