@@ -1,0 +1,7 @@
+{
+  "name"        : "PSpec",
+  "version"     : "*",
+  "description" : "An RSpec-like testing framework for Perl 6",
+  "depends"     : [],
+  "source-url"  : "git://github.com/supernovus/PSpec.git"
+}
