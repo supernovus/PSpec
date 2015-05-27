@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-module PSpec:ver<4.0.0>:auth<http://huri.net/>;
+unit module PSpec:ver<4.0.0>:auth<http://huri.net/>;
 
 ## Perform a block of code x number of times.
 multi sub infix:<times> (Int $num, &closure) is export 
