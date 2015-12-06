@@ -2,7 +2,7 @@
 
 use v6;
 
-BEGIN { @*INC.push('lib'); }
+use lib 'lib';
 
 use Test;
 use PSpec;
