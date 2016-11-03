@@ -1,4 +1,4 @@
-# PSpec -- RSpec for Perl 6
+# PSpec -- RSpec for Perl 6 [![Build Status](https://travis-ci.org/supernovus/PSpec.svg?branch=master)](https://travis-ci.org/supernovus/PSpec)
 
 ## Introduction
 
